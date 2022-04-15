@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>k5s</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-6">
+      <h1>회원가입</h1>
+      <form name="signUpForm" class="form-group" method="post"> <!-- 요청 보내기-->
+        <div class="pb-3">
+          <label for="name" class="sr-only">이름</label>
+          <input type="text" id="name" name="name" class="form-control" required oninput="checkName()">
+          <div class="invalid-feedback">
+            이름을 입력해주세요.
+          </div>
+          <div class="valid-feedback">
+          </div>
+        </div>
+
+        <div class="pb-3">
+          <label for="birthDate" class="sr-only">생년월일</label>
+          <input type="text" id="birthDate" name="birthDate" class="form-control"  placeholder="ex) 20220404" required oninput="checkBirthDate()">
+          <div class="invalid-feedback">
+            생년월일의 형식이 올바르지 않아요.
+          </div>
+          <div class="valid-feedback">
+          </div>
+        </div>
+
+        <div class="pb-3">
+          <label for="phone" class="sr-only">핸드폰</label>
+          <input type="text" id="phone" name="phone" class="form-control" placeholder="ex) 01011112222" required oninput="checkPhone()">
+          <div class="invalid-feedback">
+            사용할 수 없는 핸드폰 번호입니다.
+          </div>
+          <div class="valid-feedback">
+          </div>
+        </div>
+
+        <div class="pb-3">
+          <label for="nickname" class="sr-only">닉네임</label>
+          <input type="text" id="nickname" name="nickname" class="form-control" placeholder="채팅 및 리뷰에서 사용할 닉네임입니다." required oninput="checkNickname()">
+          <div class="invalid-feedback">
+            닉네임을 입력해주세요.
+          </div>
+          <div class="valid-feedback">
+          </div>
+        </div>
+
+        <div class="pb-3">
+          <label for="email" class="sr-only">email</label>
+          <input type="text" id="email" name="email" class="form-control" required oninput="checkEmail()">
+          <div class="invalid-feedback">
+            사용 불가능, 혹은 중복된 이메일입니다.
+          </div>
+          <div class="valid-feedback">
+            사용 가능한 이메일입니다.
+          </div>
+        </div>
+
+        <div class="pb-3">
+          <label for="password" class="sr-only">password</label>
+          <input type="password" id="password" name="password" class="form-control" placeholder="password" required oninput="checkPassword()">
+          <div class="invalid-feedback">
+            비밀번호 불일치
+          </div>
+          <div class="valid-feedback">
+            사용 가능한 비밀번호입니다.
+          </div>
+        </div>
+
+        <div class="pb-3">
+          <label for="password" class="sr-only">password_confirm</label>
+          <input type="password" id="password_confirm" name="password_confirm" class="form-control" placeholder="password_confirm" required oninput="checkPassword()">
+        </div>
+      </form>
+      <button class="btn btn-lg btn-primary mt-3" onclick="signUp()">Sign Up</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript" th:inline="javascript">
+  /*<![CDATA[*/
+  let serverDomain = "http://" + [[${serverDomain}]];
+  /*]]>*/
+  let emailRegExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[0-9a-zA-Z]{2,5}$/gi;
+  let phoneRegExp = /^[0-9]{11}$/gi;
+  let nameClassList = document.querySelector('#name').classList;
+  let birthDateClassList = document.querySelector('#birthDate').classList;
+  let nicknameDateClassList = document.querySelector('#nickname').classList;
+  let emailClassList = document.querySelector('#email').classList;
+  let passwordClassList = document.querySelector('#password').classList;
+  let phoneClassList = document.querySelector('#phone').classList;
+  let nameResult = false;
+  let birthDateResult = false;
+  let emailResult = false;
+  let passwordResult = false;
+  let phoneResult = false;
+
+  function checkName() {
+    let name = $('#name').val();
+
+    if (name=="") {
+      checkNameResult(false);
+    } else {
+      checkNameResult(true);
+    }
+  }
+
+  function checkBirthDate() {
+    let birthDate = $('#birthDate').val();
+
+    if (!birthDate || birthDate.length != 8) {
+      checkBirthDateResult(false);
+    } else {
+      let year = birthDate.substring(0, 4);
+      let month = Number(birthDate.substring(4, 6));
+      let day = Number(birthDate.substring(6));
+      if (0 < month && month < 13) {
+        switch (month) {
+          case 1:
+          case 3:
+          case 5:
+          case 7:
+          case 8:
+          case 10:
+          case 12:
+            if (0 < day && day < 32) {
+              checkBirthDateResult(true);
+            } else {
+              checkBirthDateResult(false);
+            }
+            break;
+          case 2:
+            if (0 < day && day < 30) {
+              checkBirthDateResult(true);
+            } else {
+              checkBirthDateResult(false);
+            }
+            break;
+          default:
+            if (0 < day && day < 31) {
+              checkBirthDateResult(true);
+            } else {
+              checkBirthDateResult(false);
+            }
+        }
+      }
+    }
+  }
+
+  function checkNickname() {
+    let nickname = $('#nickname').val();
+
+    if (!nickname) {
+      nicknameDateClassList.add("is-invalid");
+      nicknameDateClassList.remove("is-valid");
+    } else {
+      nicknameDateClassList.add("is-valid");
+      nicknameDateClassList.remove("is-invalid");
+    }
+  }
+
+  function checkEmail() {
+    let email = $('#email').val();
+
+    if (email.match(emailRegExp) == null) {
+      checkEmailResult(false);
+      return;
+    }
+
+    let emailValidationRequestDto = JSON.stringify({
+      email: email
+    });
+
+    $.ajax({
+      url: '/auth/email-validation',
+      type: 'post',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: emailValidationRequestDto,
+      statusCode: {
+        200: function () {
+          checkEmailResult(true);
+        },
+        409: function () {
+          checkEmailResult(false);
+        },
+        500: function () {
+          alert("다시 시도해주세요.");
+          checkEmailResult(false);
+        }
+      }
+    });
+  }
+
+  function checkPassword() {
+    let password = $('#password').val();
+    let passwordConfirm = $('#password_confirm').val();
+
+    if (!password || password == passwordConfirm) {
+      passwordClassList.add("is-valid");
+      passwordClassList.remove("is-invalid");
+      passwordResult = true;
+    } else {
+      passwordClassList.add("is-invalid");
+      passwordClassList.remove("is-valid");
+      passwordResult = false;
+    }
+  }
+
+  function checkPhone(){
+    let phone = $('#phone').val();
+
+    if (phone.match(phoneRegExp) == null) {
+      checkPhoneResult(false);
+      return;
+    }
+
+    let phoneValidationRequestDto = JSON.stringify({
+      phone: phone
+    });
+
+    $.ajax({
+      url: '/auth/phone-validation',
+      type: 'post',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: phoneValidationRequestDto,
+      statusCode: {
+        200: function () {
+          checkPhoneResult(true);
+        },
+        409: function () {
+          checkPhoneResult(false);
+        },
+        500: function () {
+          alert("다시 시도해주세요.");
+          checkPhoneResult(false);
+        }
+      }
+    });
+  }
+
+  function signUp(){
+    if (nameResult && birthDateResult && emailResult && passwordResult && phoneResult) {
+      let SignUpRequestDto = JSON.stringify({
+        name: $('#name').val(),
+        birthDate: $('#birthDate').val(),
+        phone: $('#phone').val(),
+        nickname: $('#nickname').val(),
+        email: $('#email').val(),
+        password: $('#password').val()
+      });
+
+      $.ajax({
+        url: '/auth/sign-up',
+        type: 'post',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: SignUpRequestDto,
+        statusCode: {
+          201:function(){
+            alert("회원가입이 정상적으로 완료되었습니다.");
+            location.replace(serverDomain + '/auth/login');
+          },
+          500: function (err) {
+            alert("잠시 후 다시 시도해주세요.");
+          }
+        }
+      })
+    } else {
+      alert("필요한 부분을 모두 채워주세요.");
+    }
+  }
+
+  function checkNameResult(result){
+    if(result == true){
+      nameClassList.add("is-valid");
+      nameClassList.remove("is-invalid");
+      nameResult = true;
+    } else if(result == false){
+      nameClassList.add("is-invalid");
+      nameClassList.remove("is-valid");
+      nameResult = false;
+    }
+  }
+
+  function checkBirthDateResult(result){
+    if (result == true) {
+      birthDateClassList.add("is-valid");
+      birthDateClassList.remove("is-invalid");
+      birthDateResult = true;
+    }else if (result == false) {
+      birthDateClassList.add("is-invalid");
+      birthDateClassList.remove("is-valid");
+      birthDateResult = false;
+    }
+  }
+
+  function checkEmailResult(result){
+    if (result == true) {
+      emailClassList.add("is-valid");
+      emailClassList.remove("is-invalid");
+      emailResult = true;
+    }else if (result == false) {
+      emailClassList.add("is-invalid");
+      emailClassList.remove("is-valid");
+      emailResult = false;
+    }
+  }
+
+  function checkPhoneResult(result){
+    if (result == true) {
+      phoneClassList.add("is-valid");
+      phoneClassList.remove("is-invalid");
+      phoneResult = true;
+    }else if (result == false) {
+      phoneClassList.add("is-invalid");
+      phoneClassList.remove("is-valid");
+      phoneResult = false;
+    }
+  }
+</script>
