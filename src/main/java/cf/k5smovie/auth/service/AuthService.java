@@ -58,7 +58,7 @@ public class AuthService {
 
             WebClient webClient = WebClient.builder().baseUrl(memberConvenienceServerUrl).build();
             webClient.post()
-                    .uri("/member/nickname")
+                    .uri("/member")
                     .body(Mono.just(myInformationRequestDto), MyInformationRequestDto.class)
                     .retrieve()
                     .onStatus(HttpStatus::is4xxClientError, error -> Mono.error(new ApiNotFoundException("해당 서버의 Api가 존재하지 않습니다.")))
