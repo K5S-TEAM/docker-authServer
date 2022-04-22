@@ -31,7 +31,7 @@ public class AuthController {
 
     @GetMapping("/")
     public String index(){
-        return "redirect:auth/login";
+        return "redirect:/auth/login";
     }
 
     @GetMapping("/auth/login")

@@ -13,7 +13,7 @@
         </div>
         <div class="col-md-6">
         <h1>이메일 찾기</h1>
-        <form id="findEmailForm" class="form-group" method="post" th:object="${findEmailRequestDto}" th:action="@{/templates/auth/find-email}">
+        <form id="findEmailForm" class="form-group" method="post" th:object="${findEmailRequestDto}" th:action="@{/auth/find-email}">
             <div id="unableRequest" th:if="${findEmailRequestDto.isError()}" class="alert alert-danger alert-dismissible fade show" role="alert">
                 해당하는 계정이 없습니다. 이름과 생년월일을 다시 확인해주세요.
             </div>
