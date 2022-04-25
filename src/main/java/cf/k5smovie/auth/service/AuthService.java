@@ -99,7 +99,7 @@ public class AuthService {
             throw new LoginException("이메일과 비밀번호가 올바르지 않습니다.");
         }
 
-        return jwtTokenProvider.issueAccessToken(member.getId());
+        return jwtTokenProvider.issueAccessToken(member.getId(), member.getName());
     }
 
     @Transactional
@@ -123,9 +123,9 @@ public class AuthService {
     @Transactional
     public AuthenticationResponseDto accessTokenValidation(AuthenticationRequestDto dto) {
         if (jwtTokenProvider.isTokenValid(dto.getAccessToken())) {
-            return new AuthenticationResponseDto(Long.parseLong(jwtTokenProvider.getMemberId(dto.getAccessToken())));
+            return jwtTokenProvider.getMemberInfo(dto.getAccessToken());
         } else {
-            return new AuthenticationResponseDto(null);
+            return new AuthenticationResponseDto(null, null);
         }
     }
 
