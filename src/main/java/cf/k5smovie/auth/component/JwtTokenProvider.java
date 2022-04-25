@@ -1,5 +1,6 @@
 package cf.k5smovie.auth.component;
 
+import cf.k5smovie.auth.dto.AuthenticationResponseDto;
 import cf.k5smovie.auth.service.RedisService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -26,7 +27,7 @@ public class JwtTokenProvider {
     private String secret;
 
     private Key key;
-    private static Long ACCESS_TOKEN_VALID_TIME = 1000L * 60 * 60 * 1;
+    private static Long ACCESS_TOKEN_VALID_TIME = 1000L * 60 * 60 * 6;
 //    private static Long REFRESH_TOKEN_VALID_TIME = 1000L * 60 * 60 * 24 * 14;
 
     private final UserDetailsService userDetailsService;
@@ -37,12 +38,13 @@ public class JwtTokenProvider {
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String issueAccessToken(Long id) {
+    public String issueAccessToken(Long id, String name) {
         Claims claims = Jwts.claims().setSubject(String.valueOf(id));
 
         List<String> roles = new ArrayList<>();
         roles.add("ROLE_USER");
         claims.put("roles", roles);
+        claims.put("name", name);
 
         Date now = new Date();
 
@@ -111,8 +113,10 @@ public class JwtTokenProvider {
                 .getExpiration();
     }
 
-    public String takeToken(HttpServletRequest request) {
-        return request.getHeader("ACCESS_TOKEN");
-    }
+    public AuthenticationResponseDto getMemberInfo(String accessToken) {
+        Claims payload = Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(accessToken).getBody();
 
+        return new AuthenticationResponseDto(Long.parseLong(payload.getSubject()), payload.get("name", String.class));
+    }
 }
