@@ -29,11 +29,6 @@ public class AuthController {
     @Value("${server.domain}")
     String serverDomain;
 
-    @GetMapping("/")
-    public String index(){
-        return "redirect:/auth/login";
-    }
-
     @GetMapping("/auth/login")
     public String loginForm(Model model) {
         model.addAttribute("serverDomain", serverDomain);
