@@ -6,9 +6,9 @@ CREATE TABLE member (
     email VARCHAR(128) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     created_at DATETIME(6) NOT NULL,
-    updated_at DATETIME(6) NOT NULL,
+    modified_at DATETIME(6) NOT NULL,
     PRIMARY KEY (id)
-)
+) engine = InnoDB default charset = utf8mb4;
 
 -- CREATE INDEX idx_member_email ON member (email);
 -- CREATE INDEX idx_member_phone ON member (phone);
