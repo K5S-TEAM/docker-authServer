@@ -67,9 +67,12 @@ public class JwtTokenProvider {
 //    }
 
     public boolean isTokenValid(String accessToken) {
+        /*
         if (redisService.isAccessTokenStored(accessToken)) {
             return false;
         }
+
+         */
 
         try {
             Jws<Claims> claims = Jwts

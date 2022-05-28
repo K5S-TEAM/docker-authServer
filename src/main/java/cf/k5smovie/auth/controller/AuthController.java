@@ -29,6 +29,12 @@ public class AuthController {
     @Value("${server.domain}")
     String serverDomain;
 
+    @GetMapping
+    @ResponseBody
+    public String home(){
+        return "home";
+    }
+
     @GetMapping("/auth/login")
     public String loginForm(Model model) {
         model.addAttribute("serverDomain", serverDomain);
